@@ -26,9 +26,7 @@ export default function ProjectsPage() {
       </nav>
       <main className={styles.main}>
         <section className={styles.card}>
-          <AddProjectForm onProjectAdded={() => setProjectRefreshKey((previous) => previous + 1)} />
-          <AssignUserToProjectForm onAssignmentAdded={() => setProjectRefreshKey((previous) => previous + 1)} />
-          <ProjectDisplay refreshTrigger={projectRefreshKey} />
+          
         </section>
       </main>
     </div>

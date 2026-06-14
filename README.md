@@ -253,3 +253,115 @@ Now that you have defined the project controller, test each API using Postman:
 4. Verify that each endpoint behaves as expected — every request should return a `200 OK` response.
 
 > **Note:** If `/projects/all` returns an error about `all` not being a valid ID, check your route order. Express matches routes top-to-bottom, so if `/projects/:id` is defined before `/projects/all`, the `all` literal gets caught as an ID parameter. Define `/projects/all` first to fix this.
+
+
+# Part 2: Frontend
+
+If you open the frontend right now, you will notice that the "Projects" section of the page is empty. This is because we don't have anything of substance in the project's page. We are going to build the components that populate it, namely:
+1. A project display component.
+2. An add project form (which creates a new project).
+3. An add user to project form (which assigns an associate to a project).
+
+Let's start with the project display, which should be located in `/frontend/components/project_display.tsx`. As a quick overview of what we need to do:
+1. Create a table that is able to store the project information using HTML.
+2. Develop functionality to load projects in from the database.
+
+## Part 2.1: Frontend Structure with React
+
+We are going to use the same structure as the users display page, which uses the HTML `<table>`. First, we should define the columns of the table in the `<thead>` tag - specifically, we are going to display the ID, project name, manager, associates, and the project description.
+
+```
+<table>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Project Name</th>
+            <th>Manager</th>
+            <th>Associates</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+</table>
+```
+
+This provides us with the core structure for our table. Now, you should add in a couple of example rows with the `<tbody>` tag. 
+
+Now, let's add some styling to make this look better with CSS, as it looks pretty rough at the moment. First, let's deal with the actual table, which we will provide the following styling to:
+
+```
+.table {
+  width: 100%;
+  min-width: 640px;
+  border-collapse: collapse;
+  border: 1px solid #cbd5e1;
+  text-align: left;
+  font-size: 0.875rem;
+}
+```
+
+What does all of this mean?
+1. `width: 100%` means that the table is going to be as wide as its parent component, which in this case is the `<div className={styles.tablewrap}>`. 
+2. `min-width: 640px`. If for some reason the size of the parent component decreases (let's say we shorten the window), the table still has to be at least 640 pixels, preventing bad styling with smaller sizes.
+3. `border-collapse: collapse` merges adjacent table cell borders into a single shared border instead of rendering them as separate double borders.
+4. `border: 1px solid #cbd5e1` defines the properties of the borders of the cells. They are 1 pixel wide, solid, and have a white coloration.
+5. `text-align: left` means that the text inside the cell will be left justified.
+6. `font-size: 0.875rem` means the font size inside the table will be 0.875rem.
+
+To apply these styles to our components, we have to follow what the parent `<div>` does - we define the appropriate style as a class. In other words, we want to change `<table>` to `<table className={styles.table}>`.
+
+Its your turn to add in some styling to our components! 
+1. To the `<thead>` tag, add styling under `.head` that makes the background color `#f1f5f9`.
+2. To each of the `<th>` cells, add styling under `.cell` that adds padding around the text.
+
+## Part 2.2: Adding the API Request Functions
+
+In order to be able to access the backend controllers, we need to use the API that we have defined before. The best way that we do this is to define helper functions to access the API in the `/api` folder. You can see that we have done this in `users.ts` and `associates.ts`, but it is up to us to define it for the projects.
+
+First, let's define a custom type for `Project`, to make exports easier and type checking more robust. This is quite simple - all we are defining is a JSON-like type with an ID, project name, manager ID, and description.
+```
+export type Project = {
+    id: number;
+    project_name: string;
+    project_manager_id: number;
+    project_description: string;
+};
+```
+
+Next, let's work through an example of getting the project by ID. First, we create the function header:
+```
+export const getProjectById = async (id: number): Promise<Project> => {}
+```
+
+Here's what each part means:
+1. `export` — makes the function available to import in other files (e.g. your React components).
+2. `const getProjectById` — defines the function as a constant named `getProjectById`.
+3. `async` — marks the function as asynchronous, since fetching from an API takes time.
+4. `(id: number)` — the function takes one parameter, `id`, typed as a `number` in TypeScript.
+5. `: Promise<Project>` — the return type. Because the function is `async`, it returns a Promise. Once resolved, that Promise will contain a `Project` object (a TypeScript type defined to match the shape of a project row from your database).
+
+We can then create an object to extract the response from the API. Notice that the `.env` should contain `NEXT_PUBLIC_BACKEND_URL`. We are going to use what we know as the URL for getting a project by ID and create a call:
+```
+const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/projects/${id}`);
+``` 
+
+We should also add some error handling here:
+```
+if (!response.ok) {
+    throw new Error(`Failed to fetch project with ID ${id}`);
+}
+```
+
+Finally, let's get the data from the response and project it to our custom type, and then return it:
+```
+const data = (await response.json()) as Project;
+return data;
+```
+
+Now that we have done this for one of the APIs, let's make sure to do it for all of them. Create a helper function for each of the API calls that are under the `Project` database. Note that for some of these, particularly for the PUT and the POST request, you will also have to include method, headers, and a body, like so:
+```
+method: "POST",
+headers: {
+    "Content-Type": "application/json",
+},
+body: JSON.stringify(<object>),
+```
