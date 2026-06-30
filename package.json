@@ -1,0 +1,26 @@
+{
+  "name": "jamera_fernando_swe_primer",
+  "version": "1.0.0",
+  "description": "Analyst/associate name: Jamera Mellyn Fernando",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jameramellyn/Jamera_Fernando_SWE_primer.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/jameramellyn/Jamera_Fernando_SWE_primer/issues"
+  },
+  "homepage": "https://github.com/jameramellyn/Jamera_Fernando_SWE_primer#readme",
+  "dependencies": {
+    "autoprefixer": "^10.5.2",
+    "postcss": "^8.5.16",
+    "tailwindcss": "^4.3.2"
+  }
+}
