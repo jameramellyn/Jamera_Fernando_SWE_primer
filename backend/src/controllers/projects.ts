@@ -36,11 +36,11 @@ export const getAllProjects = async (req: Request, res: Response) => {
 };
 // Create a new project
 export const createProject = async (req: Request, res: Response) => {
-    const { name, managerId, description } = req.body;
+    const { project_name, project_manager_id, project_description } = req.body;
 
     const { data, error } = await supabase
         .from("projects")
-        .insert([{ name, managerId, description }])
+        .insert([{ project_name, project_manager_id, project_description }])
         .select()
         .single();
 
@@ -55,11 +55,11 @@ export const createProject = async (req: Request, res: Response) => {
 // Update a project
 export const updateProject = async (req: Request, res: Response) => {
     const projectId = req.params.id;
-    const { name, managerId, description } = req.body;
+    const { project_name, project_manager_id, project_description } = req.body;
 
     const { data, error } = await supabase
         .from("projects")
-        .update({ name, managerId, description })
+        .update({ project_name, project_manager_id, project_description })
         .eq("id", projectId)
         .select()
         .single();
