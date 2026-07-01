@@ -15,15 +15,34 @@ export const getProjectById = async (id: number): Promise<Project> => {
     return data;
 };
 
-// GET /projects/all - Get all projects
+
 export const getAllProjects = async (): Promise<Project[]> => {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/project/all`);
+    const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/projects/all`;
+    console.log("Fetching projects from:", url);
+  
+    const response = await fetch(url);
+  
+    console.log("Projects response status:", response.status);
+  
     if (!response.ok) {
-        throw new Error("Failed to fetch all projects");
+      const text = await response.text();
+      console.error("Projects error response:", text);
+      throw new Error("Failed to fetch all projects");
     }
+  
     const data = (await response.json()) as Project[];
     return data;
-};
+  };
+
+// // GET /projects/all - Get all projects
+// export const getAllProjects = async (): Promise<Project[]> => {
+//     const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/projects/all`);
+//     if (!response.ok) {
+//         throw new Error("Failed to fetch all projects");
+//     }
+//     const data = (await response.json()) as Project[];
+//     return data;
+// };
 
 // GET /projects/manager/:manager_id - Get projects by manager ID
 export const getProjectsByManagerId = async (managerId: number): Promise<Project[]> => {
@@ -37,7 +56,7 @@ export const getProjectsByManagerId = async (managerId: number): Promise<Project
 
 // POST /projects - Create a new project
 export const createProject = async (project: Omit<Project, "id">): Promise<Project> => {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/project`, {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/projects`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
